@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* css umum untuk body halaman */
         body {
             font-family: 'Roboto', sans-serif;
-            margin: 90;
+            margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
@@ -16,6 +18,7 @@
             background-color: #b7caf4;
         }
 
+        /* css untuk kontainer form reset password */
         .container {
             background-color: #fff;
             padding: 20px;
@@ -24,11 +27,13 @@
             width: 300px;
         }
 
+        /* css untuk judul */
         h2 {
             text-align: center;
             margin-bottom: 10px;
         }
 
+        /* css untuk paragraf deskripsi */
         p {
             text-align: center;
             margin-bottom: 20px;
@@ -36,20 +41,45 @@
             color: #666;
         }
 
+        /* css untuk label input */
         label {
             margin-bottom: 5px;
             font-size: 16px;
             display: block;
         }
-
-        input[type="password"] {
+        
+        /* css untuk wrapper input, untuk menampung ikon toggle */
+        .input-wrapper {
+            position: relative;
             width: 94%;
+        }
+
+        /* Gaya untuk field input password */
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
 
+        /* Gaya untuk ikon toggle password */
+        .toggle-password {
+            position: absolute;
+            top: 40%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            font-size: 14px; /* Ukuran ikon yang lebih kecil */
+        }
+
+        .toggle-password:hover {
+            color: #2863a7;
+        }
+
+        /* Gaya untuk pesan kesalahan */
         .error {
             color: red;
             font-size: 0.9em;
@@ -57,6 +87,7 @@
             display: block;
         }
 
+        /* Gaya untuk tombol */
         button {
             font-family: 'Roboto', sans-serif;
             width: 100%;
@@ -67,9 +98,9 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
-            
         }
 
+        /* Gaya hover untuk tombol */
         button:hover {
             background-color: #577ca7;
         }
@@ -80,12 +111,20 @@
         <h2>Password Reset</h2>
         <p>Enter new password and then repeat it</p>
         <form id="resetPasswordForm">
+            <!-- Input untuk password baru -->
             <label for="newPassword">New Password :</label>
-            <input type="password" id="newPassword" name="newPassword">
+            <div class="input-wrapper">
+                <input type="password" id="newPassword" name="newPassword">
+                <i class="fas fa-eye toggle-password" id="toggleNewPassword"></i>
+            </div>
             <span id="newPasswordError" class="error"></span>
 
+            <!-- Input untuk konfirmasi password -->
             <label for="confirmPassword">Repeat Password :</label>
-            <input type="password" id="confirmPassword" name="confirmPassword">
+            <div class="input-wrapper">
+                <input type="password" id="confirmPassword" name="confirmPassword">
+                <i class="fas fa-eye toggle-password" id="toggleConfirmPassword"></i>
+            </div>
             <span id="confirmPasswordError" class="error"></span>
 
             <button type="submit">Save</button>
@@ -93,6 +132,7 @@
     </div>
 
     <script>
+        // Event listener untuk submit form
         document.getElementById('resetPasswordForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Mencegah pengiriman form default
 
@@ -108,31 +148,57 @@
 
             // Validasi apakah field diisi
             if (!newPassword) {
-                document.getElementById('newPasswordError').innerText = 'Password baru harus diisi.';
+                document.getElementById('newPasswordError').innerText = 'New password is required.';
                 valid = false;
             }
 
             if (!confirmPassword) {
-                document.getElementById('confirmPasswordError').innerText = 'Konfirmasi password harus diisi.';
+                document.getElementById('confirmPasswordError').innerText = 'Confirm password is required';
                 valid = false;
             }
 
             // Validasi persyaratan password baru
-            const passwordRequirements = /^(?=.\d)(?=.[!@#$%^&,.-_])(?=.[a-z])(?=.*[A-Z]).{8,}$/;
+            const passwordRequirements = /^(?=.*\d)(?=.*[!@#$%^&,.-_])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
             if (newPassword && !passwordRequirements.test(newPassword)) {
-                document.getElementById('newPasswordError').innerText = 'Password harus minimal 8 karakter, termasuk huruf besar, huruf kecil, angka, dan karakter khusus.';
+                document.getElementById('newPasswordError').innerText = 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters';
                 valid = false;
             }
 
-            // Validasi kecocokan password baru dan konfirmasi password
+            // Validasi mencocokkan password baru dan konfirmasi password
             if (newPassword && confirmPassword && newPassword !== confirmPassword) {
-                document.getElementById('confirmPasswordError').innerText = 'Password tidak sesuai.';
+                document.getElementById('confirmPasswordError').innerText = 'Passwords do not match';
                 valid = false;
             }
 
             // Jika valid, lakukan pengalihan ke halaman login
             if (valid) {
-                window.location.href = 'login.html'; // Gantilah 'login.html' dengan URL halaman login Anda
+                window.location.href = 'login.html'; 
+            }
+        });
+
+        // Fungsi untuk icon mata password baru
+        document.getElementById('toggleNewPassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('newPassword');
+            const icon = this;
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+
+        // Fungsi untuk icon mata konfirmasi password
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('confirmPassword');
+            const icon = this;
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         });
     </script>
